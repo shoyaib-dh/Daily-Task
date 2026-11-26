@@ -1,0 +1,6 @@
+{
+  "name": "POMS — Personal Office Management System",
+  "description": "A private, single-admin personal office management platform for tasks, daily planning, calendar, notes, projects, custom records, finances, files, and analytics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
