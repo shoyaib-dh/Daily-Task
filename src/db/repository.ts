@@ -20,7 +20,10 @@ import {
 } from './schema.ts';
 
 export const DEFAULT_ADMIN_USERNAME =
-  (process.env.ADMIN_USERNAME || 'shoyaibwork').trim() || 'shoyaibwork';
+  (process.env.ADMIN_USERNAME || 'shoyaibwork')
+    .trim()
+    .replace(/^["'](.*)["']$/, '$1')
+    .trim() || 'shoyaibwork';
 
 export function hashSessionToken(token: string): string {
   return crypto.createHash('sha256').update(token).digest('hex');

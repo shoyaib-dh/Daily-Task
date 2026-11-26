@@ -84,10 +84,16 @@ function timingSafeCompare(a: string, b: string): boolean {
   return crypto.timingSafeEqual(hashA, hashB);
 }
 
+function getConfiguredEnvPassword(): string {
+  const raw = (process.env.ADMIN_INITIAL_PASSWORD || '').trim();
+  const unquoted = raw.replace(/^["'](.*)["']$/, '$1').trim();
+  return unquoted;
+}
+
 // Check whether first-run local admin setup is needed
 router.get('/status', async (_req, res) => {
   try {
-    const envPassword = (process.env.ADMIN_INITIAL_PASSWORD || '').trim();
+    const envPassword = getConfiguredEnvPassword();
     const existing = await getPrimaryAdmin();
     const needsSetup = !envPassword && (!existing || !existing.passwordHash);
     return res.json({
@@ -103,7 +109,7 @@ router.get('/status', async (_req, res) => {
 // One-time local admin password setup (locked permanently once configured or if env password exists)
 router.post('/setup', async (req, res) => {
   try {
-    const envPassword = (process.env.ADMIN_INITIAL_PASSWORD || '').trim();
+    const envPassword = getConfiguredEnvPassword();
     if (envPassword) {
       return res.status(403).json({
         error: 'Initial admin credentials are already configured via environment variables.',
@@ -169,7 +175,7 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    const envPassword = (process.env.ADMIN_INITIAL_PASSWORD || '').trim();
+    const envPassword = getConfiguredEnvPassword();
     const envUsername = DEFAULT_ADMIN_USERNAME;
     let admin = await getAdminByUsername(username);
     let authenticated = false;
